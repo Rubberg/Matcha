@@ -1,0 +1,220 @@
+<% include nav %>
+
+<div class="container">
+    <% if (user != undefined) { %>
+    <div id="trier" class="row">
+        <ul id="accordion" class="accordion">
+            <li>
+                <div class="link"><i class="fa fa-sort"></i>Trier les profils par: <i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu">
+                    <li><a id="matchedby" href="/home?sort=matchedby" class="tritype">ils m'ont matché </a></li>
+                    <li><a id="matching" href="/home?sort=matching" class="tritype">je les ai matché </a></li>
+                    <li><a id="visited" href="/home?sort=visited" class="tritype">ils ont visité mon profil </a></li>
+                    <li><a id="visitor" href="/home?sort=visitor" class="tritype">j'ai visité leur profil </a></li>
+
+                    <li><a id="age" href="/home?sort=age" class="tritype">âge </a></li>
+                    <li><a id="distance" href="/home?sort=distance" class="tritype">localisation </a></li>
+                    <li><a id="popularity" href="/home?sort=popularity" class="tritype">popularité </a></li>
+                </ul>
+            </li>
+        </ul>
+        <ul id="accordion" class="accordion">            
+            <li>
+                <div class="link"><i class="fa fa-sort-amount-asc"></i>Filtrer les profils par: <i class="fa fa-chevron-down"></i></div>
+                <ul class="submenu">
+
+                    <li class="age"><div class="submenulabel">Âge : </div><a class="editable" value="20">- 20 ans</a><a class="editable" value="20-30">20 - 30 ans</a><a class="editable" value="30-40">30 - 40 ans</a><a class="editable" value="40-50">40 - 50 ans</a><a class="editable" value="50-60">50 - 60 ans</a><a class="editable" value="60">+ 60 ans</a></li>
+                    
+                    <li class="loc"><div class="submenulabel">Localisation : </div><a class="editable" value="5">- 5kms</a><a class="editable" value="15">- 15kms</a><a class="editable" value="25">- 25kms</a><a class="editable" value="50">- 50kms</a><a class="editable" value="100">- 100kms</a><a class="editable" value="250">- 250kms</a></li>
+                    
+                    <li class="pop"><div class="submenulabel">Matchaz : </div><a class="editable" value="25">- 25</a><a class="editable" value="25-50">25 - 50</a><a class="editable" value="50-75">50 - 75</a><a class="editable" value="75-100">75 - 100</a><a class="editable" value="100-150">100 - 150</a><a class="editable" value="150-200">150 - 200</a><a class="editable" value="200">+ 200</a></li>
+                    
+                    <li class="hobbies">
+                        <div class="submenulabel">Hobbies : </div>
+                            #<input class="form-control" style="width: 50%; display: inline-block;" type="text" name="value" id="commonhob" placeholder="Tapez le nom d'un hobbie">
+                            <input type="hidden" name="sort" value="commonhob">
+                            <input id="hobbtn" class="btn btn-default" type="submit" style="margin: auto; display: inline-block;">
+                    </li>
+                    <li>
+                        <input id="reload" class="btn btn-default" type="submit" style="margin: auto; display: block;" value="Réinitialiser la recherche">
+                    </li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <% } %>
+    
+	<div class="row">
+    <% if (user != undefined) { %>
+		<h1> <%= title %> </h1>
+    <% } 
+        else {%>
+        <h1> Inscrivez-vous vite et découvrez des centaines de profils! </h1>
+    <% } %>
+	</div>
+
+    <div class="row">
+
+    <%  for (var i = 0; i < users.length; i++) { 
+            if (user != users[i].login) {%>
+        <div class="col-sm-3" id="<%= users[i].login %>">
+            <input type="hidden" class="popval" value="<%= users[i].popularity %>">
+            <input type="hidden" class="locval" value="<%= users[i].distance %>">
+            <input type="hidden" class="ageval" value="<%= users[i].age %>">
+            <div class="card">
+                <canvas class="header-bg" width="250" height="70" id="header-blur"></canvas>
+                <div class="avatar">
+                    <img src="" alt="" />
+                </div>
+                <div class="content">
+                    <h3> <%= users[i].login %> </h3>
+                       <p> <%= users[i].age %>,  <%= users[i].sex %>,  <%= users[i].orientation %> </p>
+                       <% if (users[i].online == "y") { %>
+                        <small><i class="fa fa-circle"></i> Online </small>
+                        <% } else { %>
+                        <small><i class="fa fa-circle-o"></i> Offline </small>
+                        <% } %>
+                    <% if (user != undefined) { %>
+                    <p>Distance: <%=users[i].distance%>kms</p>
+                    <p><a type="button" class="btn btn-default" href="/profile?login=<%= users[i].login %> ">Voir le profil</a></p>
+                    <% } %>
+                </div>
+            </div>
+        </div>
+        <img class="src-image"  src="<% if (users[i].primpicpath) { %><%= users[i].primpicpath %><% } else { %>./img/noprimpic.png<% } %>" />
+    <% } } %>
+    </div>
+
+</div> 
+
+
+<script src="profile_cards.js" ></script>  
+
+<script type="text/javascript">
+
+    <% if (user) { %>
+        var socket = io.connect('http://localhost:8080');
+        socket.on('connect', function() {
+            socket.emit('newUser', {login: '<%=user%>', id: socket.id});
+            
+            $("#hobbtn").on('click', function () {
+                socket.emit('hobbie', {hobbie: $("#commonhob").val(), id: socket.id});
+            });
+
+            $('#notifs').on('click', function(e) {
+                socket.emit('readNotifs', {read: '<%=user%>', id: socket.id});
+                $('.badge').html('');
+            });
+
+            socket.on('newNotif', function(data) {
+                if ('<%=user%>' != data.author) {
+                    var counter = parseInt($('.badge').html());
+                    if (isNaN(counter)) {
+                        counter = 0;
+                    }
+                    var li = $(document.createElement('a'));
+                    var divider = $(document.createElement('li'));
+                    divider.addClass('divider');
+                    li.textContent = data.newNotif;
+                    li.html(data.newNotif);
+                    li.attr('href', data.href);
+                    $('#notifsList').prepend(divider);
+                    $('#notifsList').prepend(li);
+                    counter = counter + 1;
+                    $('.badge').html(counter);
+                    
+                  }
+            });
+
+
+            socket.on('hobbieUsers', function(data) {
+                <%  for (var i = 0; i < users.length; i++) { 
+                    if (user != users[i].login) {%>
+                        var el = $('#<%= users[i].login %>');
+                        var hide = 'yes';
+                        for (var j = 0; j < data.hobbieUsers.length; j++) {
+                            if (data.hobbieUsers[j].login == '<%=users[i].login%>') {
+                                hide = 'no';
+                            }
+                        }
+                        if (hide == "yes") {
+                            el.hide();
+                        }
+                <% } } %>
+
+            })
+
+        });
+
+        function hideBlocked() {
+            var el = "";
+            <%  for (var i = 0; i < users.length; i++) { %>
+                    el = $('#<%= users[i].login %>');
+                    <%  for (var j = 0; j < blockedUsers.length; j++) {
+                            if ((users[i].login == blockedUsers[j].blocked) & ((blockedUsers[j].blocker == "all") | (blockedUsers[j].blocker == user))) { %>
+                                el.hide();
+                            <%}
+                        }
+                }%>            
+        }
+        $(function(){
+            hideBlocked();
+        });
+
+    <% } %>
+    
+
+
+
+    function sort(e) {
+        var type = $(this).parent().attr('class');
+        $("."+type+" > a").each(function(){ 
+          if ($(this).css("background-color") == 'rgb(182, 59, 77)') {
+            $("#reload").click();
+          }
+        });
+        $("."+type+" > a").css('background', '#444359');
+        $(this).css('background', '#b63b4d');
+        var val = $(this).attr('value').split('-');
+        var val0 = parseInt(val[0]);
+        if (val[1] !== NaN) {
+            var val1 = parseInt(val[1]);
+        }
+        
+        <%  for (var i = 0; i < users.length; i++) { 
+            if (user != users[i].login) {%>
+                var el = $('#<%= users[i].login %>');
+                
+                if (((isNaN(val1)) && (!isNaN(val0)) && (type == 'pop') && (val0 == 200) && (el.children('.'+type+'val').attr('value') < 200))
+                    || ((isNaN(val1)) && (!isNaN(val0)) && (type == 'pop') && (val0 == 25) && (el.children('.'+type+'val').attr('value') > 25))
+                    || ((isNaN(val1)) && (!isNaN(val0)) && (type == 'age') && (val0 == 20) && (el.children('.'+type+'val').attr('value') > 20))
+                    || ((isNaN(val1)) && (!isNaN(val0)) && (type == 'age') && (val0 == 60) && (el.children('.'+type+'val').attr('value') < 60))
+                    || ((isNaN(val1)) && (!isNaN(val0)) && (type == 'loc') && (el.children('.'+type+'val').attr('value') > val0))
+                    || ((!isNaN(val0)) && (!isNaN(val1)) && ((el.children('.'+type+'val').attr('value') < val0) || (el.children('.'+type+'val').attr('value') >= val1)))) {
+                    el.hide();
+                }
+        <% } } %>
+    }
+    var tritypes = $('.editable');
+    for (var i = 0; i < tritypes.length; i++) {
+        tritypes[i].addEventListener('click', sort, false);
+    }
+
+    $("#reload").on('click', function () {
+        <%  for (var i = 0; i < users.length; i++) { 
+        if (user != users[i].login) {%>
+            var el = $('#<%= users[i].login %>');
+            el.show();
+        <% } } %>
+        hideBlocked();
+        $('.editable').css('background', '#444359');
+    });
+
+
+    $("#commonhob").on('keyup', function (e) {
+        if (e.keyCode == 13) {
+            $('#hobbtn').click();
+        }
+    });
+</script>

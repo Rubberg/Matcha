@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html>
+
+	<% include header %>
+	<link href="../../style/profile.css" rel="stylesheet">
+	<link href="../../style/profile_cards.css" rel="stylesheet">
+
+
+	
+	<body>
+	
+		<main class="wrapper">
+
+			
+
+			<% include profile_cards %>
+
+
+		</main>
+
+		<% if (user != undefined) { %>
+		<script type="text/javascript">
+		    function cloneAsObject(obj) {
+		       if (obj === null || !(obj instanceof Object))
+		           return obj;
+		       var temp = (obj instanceof Array) ? [] : {};
+		       for (var key in obj)
+		           temp[key] = cloneAsObject(obj[key]);
+		       return temp;
+		    }
+
+		    <% if (sessionUserDatas.city == '?') { %>
+		    	socket.on('connect', function() {
+			        if (navigator.geolocation) {
+			            navigator.geolocation.getCurrentPosition(function(position){
+			                $.getJSON("http://ip-api.com/json/?callback=?", function(datas) {
+			                    var datas = JSON.stringify(datas);
+			                    socket.emit('newLoc', {login: '<%=user%>', id: socket.id, loc: datas});
+			                });
+			            });
+			        }
+			        $.getJSON("http://ip-api.com/json/?callback=?", function(datas) {
+			            var datas = JSON.stringify(datas);
+			         	socket.emit('newLoc', {login: '<%=user%>', id: socket.id, loc: datas});
+			        });
+		    	});
+		    <%}%> 
+		</script>
+		<% } %>
+
+
+		<script src="profile_full.js" ></script>
+
+
+		<%	include footer %>
+
+	</body>
+
+</html>

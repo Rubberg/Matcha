@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+	<% include header %>
+	<link href="../../style/profile.css" rel="stylesheet">
+	<link href="../../style/profile_cards.css" rel="stylesheet">
+
+
+	
+	<body>
+	
+		<main class="wrapper">
+
+			
+
+			<% include profile_cards %>
+
+
+		</main>
+
+
+		<script src="profile_full.js" ></script>
+
+		<script type="text/javascript">
+			$('#matchedby').attr("href", '/search?sort=matchedby');
+			$('#matching').attr("href", '/search?sort=matching');
+			$('#visitor').attr("href", '/search?sort=visitor');
+			$('#visited').attr("href", '/search?sort=visited');
+			$('#age').attr("href", '/search?sort=age');
+			$('#distance').attr("href", '/search?sort=distance');
+			$('#popularity').attr("href", '/search?sort=popularity');
+		</script>
+
+
+		<%	include footer %>
+
+	</body>
+
+</html>

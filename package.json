@@ -1,0 +1,26 @@
+{
+  "name": "matcha",
+  "version": "1.0.0",
+  "description": "Match a bitch!",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "node server.js"
+  },
+  "author": "gdufeutr",
+  "license": "ISC",
+  "dependencies": {
+    "body-parser": "^1.15.2",
+    "connect-busboy": "0.0.2",
+    "ejs": "^2.5.2",
+    "express": "^4.14.0",
+    "express-session": "^1.14.1",
+    "haversine": "^1.0.1",
+    "htmlspecialchars": "^1.0.5",
+    "moment": "^2.15.1",
+    "mysql": "^2.11.1",
+    "node-geocoder": "^3.16.0",
+    "nodemailer": "^2.6.4",
+    "socket.io": "^1.5.1"
+  }
+}

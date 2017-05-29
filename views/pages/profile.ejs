@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html>
+
+	<% include header %>
+	<link href="../../style/profile.css" rel="stylesheet">
+	<link href="../../style/fileinput.css" rel="stylesheet">
+
+	
+	<body>
+	
+		<main class="wrapper">
+
+			<% include nav %>
+
+			<div class="container">
+				<div class="row">
+                    <p class="ret-button"><a id="goback" type="button" class="btn-o"><i class="fa fa-undo"></i> Retour à la liste des profils</a></p>
+					<!-- Conteneur -->
+					<ul id="accordion" class="accordion">
+				    <li>
+						<div class="col col_4 iamgurdeep-pic">
+							<img class="img-responsive iamgurdeeposahan" alt="iamgurdeeposahan" src="<% if (primpic) { %><%= primpic %><% } else { %>./img/noprimpic.png<% } %>" id="primpic">
+							<div class="username">
+							    
+							    <% if (online == "y") { %>
+							    <div><span><%= login %></span><small><i class="fa fa-circle"></i> Online </small></div>
+							    <% } else { %>
+							    <div><span><%= login %></span><small><i class="fa fa-circle-o"></i> Offline, dernière connection le <%= lastco %>.</small></div>
+							    <% } %>
+							    
+							    <% if (user != login) {
+							    	if (oklike == 'y') {
+							    		if (alreadylike !== 'yes') {%>
+
+							    <a id="like" class="btn-o"> <i class="fa fa-fire"></i> Je matcha! </a>
+							    	<% }
+							    	else { %>
+							    <a id="like" class="btn-o" style="background: rgb(182, 59, 77);"> <i class="fa fa-fire"></i> Je l'ai matché(e)! </a>
+
+							    <% } %>
+							    <a id="chat" href="/chat?dest=<%=login%>" class="btn-o"> <i class="fa fa-envelope"></i> Matcha réciproque : chattez! </a>
+							    <% } }%>
+
+							    <a id="chatbis" class="btn-o"> Cet utilisateur vous a matché! </a>
+
+							    <a id="matchaz" class="btn-o"> <i class="fa fa-heart"></i> Popularité:  <%= popularity %> Matchaz </a>
+
+							    
+							    <% if (user != login) { 
+							    	if (user != undefined) { %>
+							     <ul class="nav navbar-nav">
+							        <li class="dropdown">
+							          <a href="#" class="dropdown-toggle" data-toggle="dropdown"><span id="blocker" class="fa fa-ellipsis-v pull-right"></span></a>
+							          <ul class="dropdown-menu pull-right">
+							            <li><a id="report" href="#">Signaler le profil <i class="fa fa-bug"></i></a></li>
+							            <li><a id="block" href="#">Bloquer le profil <i class="fa fa-lock"></i></a></li>
+							          </ul>
+							        </li>
+							      </ul>
+							    <% } } %>
+							   
+							</div>
+					    
+						</div>
+			        
+			    </li>
+					<li class="default open">
+						<div class="link"><i class="fa fa-globe"></i>À propos: <i class="fa fa-chevron-down"></i></div>
+						<ul class="submenu">
+							<% if (user == login) { %>
+							<li><div class="submenulabel">Login: </div><a href="#" id="login" data-type="text" data-pk="1" data-name="login" data-url="/profile" 
+							data-original-title="Modifiez votre login: "> <%=login %> </a></li>
+
+							<li><div class="submenulabel">Nom: </div><a href="#" id="name" data-type="text" data-pk="1" data-name="name" data-url="/profile" 
+							data-original-title="Modifiez votre nom: "> <%= name %> </a></li>
+
+							<li><div class="submenulabel">Prénom: </div><a href="#" id="firstname" data-type="text" data-pk="1" data-name="firstname" data-url="/profile" data-original-title="Modifiez votre prénom: "> <%= firstname %> </a></li>
+
+							<li><div class="submenulabel">Ville: </div><a href="#" id="city" data-type="text" data-pk="1" data-name="city" data-url="/profile" data-original-title="Modifiez votre localisation: "> <%= city %> </a></li>
+
+							<li><div class="submenulabel">Email: </div><a href="#" id="email" data-type="text" data-pk="1" data-name="email" data-url="/profile" 
+							data-original-title="Modifiez votre email: "> <%= email %> </a></li>
+
+							<li><div class="submenulabel">Mot de Passe : </div><a href="#" id="password" data-type="text" data-pk="1" data-name="password" data-url="/profile" 
+							data-original-title="Modifiez votre mot de passe: "> <%= password %> </a></li>
+
+							<li><div class="submenulabel">Date de naissance : </div><a href="#" id="birthdate" data-type="combodate" data-value="1980-01-01" data-pk="1" data-name="birthdate" data-url="/profile" 
+							data-original-title="Modifiez votre date de naissance: "> <%= birthdate %> </a></li>
+
+							<%if (age !== 0) {%>
+							<li><div class="submenulabel">Age : </div><a id="age" data-type="text" data-pk="1" data-name="age"> <%= age %> </a></li>
+							<%}%>
+
+							<li><div class="submenulabel">Sexe: </div><a href="#" id="sex" data-type="select" data-pk="1" data-name="sex" data-url="/profile/"
+							data-original-title="Modifiez votre sexe: "> <%= sex %> </a></li>
+
+							<li><div class="submenulabel">Orientation sexuelle: </div><a href="#" id="orientation" data-type="select" data-pk="1" data-name="orientation" data-url="/profile" data-original-title="Modifiez votre orientation sexuelle: "> <%= orientation %> </a></li>
+							<% }
+							else { %>
+							<li><div class="submenulabel">Login: </div><a class="non-editable"> <%= login %> </a></li>
+							<li><div class="submenulabel">Date de Naissance: </div><a class="non-editable"> <%= birthdate %> </a></li>
+							<li><div class="submenulabel">Age: </div><a class="non-editable"> <%= age %> </a></li>
+							<li><div class="submenulabel">Sexe: </div><a class="non-editable"> <%= sex %> </a></li>
+							<li><div class="submenulabel">Orientation sexuelle: </div><a class="non-editable"> <%= orientation %> </a></li>
+							<% } %>
+
+						</ul>
+					</li>
+					<li>
+						<div class="link"><i class="fa fa-code"></i>Hobbies<i class="fa fa-chevron-down"></i></div>
+						<ul class="submenu">
+
+							<% if (user == login) { %>
+							<li>
+								<div class="submenulabel">Ajouter un hobbie: </div>
+						    	<a href="#" id="hobbie" data-type="text" data-pk="1" data-name="hobbie" data-url="/profile" data-original-title="Ajouter un hobbie: "> Cliquez ici! </a>
+							</li>
+							<% } %>
+							<li id="hobbieList">
+							<% 
+							if (hobbies != undefined) {
+								for (var i = 0; i < hobbies.length; i++) { %>
+
+								<a href="/home?hobbie=<%= hobbies[i].hobbie %>" ><span class="tags"> #<%= hobbies[i].hobbie %> </span></a>
+			                <% } } else {%>
+			                Aucun hobbie! <% }%> 
+			                </li>
+
+						</ul>
+					</li>
+					<li>
+						<div class="link"><i class="fa fa-picture-o"></i>Photos <small>  
+						<% if (photos != undefined) { %>
+							 ( <%= photos.length %> )<%
+						}
+						if (photos == undefined) { 
+							if (user == login) {%>
+							  	(Aucune photo? Ajoutez-en pour pouvoir intéragir avec les autres profils!)
+							<% } else {%>
+								(Aucune photo)
+						<% } }%>
+							
+						</small><i class="fa fa-chevron-down"></i></div>
+						<ul class="submenu">
+
+							<li class="photosgurdeep">
+				    			<% if (user == login) { 
+				    				if ((photos == undefined) || (photos.length < 5)){%>
+			                
+				        		<form action="/upload" method="post" enctype="multipart/form-data">
+									<label class="control-label">Ajouter une photo:</label>
+									<span><small>(permet de matcher des utilisateurs)</small></span>
+									<input id="input-1" type="file" class="file" name="upload">
+				        		</form>
+
+				        		<% }}%>
+			    			    
+							<%  if (photos != undefined) { %>
+								<form method="post" action="/pic_select">
+								<% for (var i = 0; i < photos.length; i++) { %>
+									<input type="radio" name="primpic" id="p<%= i %>" value="<%= photos[i].id %>">
+									<label for="p<%= i %>">
+										<% if (user == login) { %>
+										<a onclick="picSelector(<%= i %>);" id="pic<%= i %>"><img class="img-responsive iamgurdeeposahan" alt="iamgurdeeposahan" src="<%= photos[i].picpath %>"></a>
+										<% } else {%>
+										<a id="pic<%= i %>"><img class="img-responsive iamgurdeeposahan" alt="iamgurdeeposahan" src="<%= photos[i].picpath %>"></a>
+										<% } %>
+									</label>
+				    			<% } %>
+				    			<% if (user == login) { %>
+				    				<input class="btn-o" id="profilePicSelector" type="submit" name="selected_pic" value="Faire de la photo sélectionnée votre photo de profil">
+				    				<input class="btn-o" id="profilePicDeletor" type="submit" name="deleted_pic" value="Supprimer la photo sélectionnée de votre profil">
+				    	   		<% } %>
+
+								</form>
+				    		<% } %>
+							</li>
+						</ul>
+					</li>
+					<li><div class="link"><i class="fa fa-user"></i>Présentation: <i class="fa fa-chevron-down"></i></div>
+						<ul class="submenu">
+						<% if (user == login) { %>
+
+			    			<li><a href="#" id="bio" data-type="text" data-pk="1" data-name="bio" data-url="/profile" data-original-title="Présentez-vous en quelques mots: "></i> <%= bio %> </a></li>
+			    		<% }
+							else { %>
+							<li><a class="non-editable"></i> <%= bio %> </a></li>
+							<% } %>
+						</ul>
+					</li>
+				</ul>
+				</div>
+			    
+			    
+			</div>
+
+			<script src="profile_full.js" ></script>
+			<script src="moment.min.js"></script>
+			<script src="fileinput.js"></script>
+			<script src="fileinput_config.js"></script>
+			<script src="profilePicSelector.js"></script>
+
+		    <script src="/socket.io/socket.io.js"></script>
+			
+	        <script type="text/javascript">
+
+	        	$('#hobbie').on('save', function(e, params) {
+                	if ($('#hobbieList').text().trim() == 'Aucun hobbie!') {
+                		$('#hobbieList').text('');	
+                	}
+                	if ($('#hobbie').text() !== 'undefined') {
+	                	var hobbie = params.newValue;
+	                	var hobbieList = $('#hobbieList');
+	                	var newHobbie = document.createElement('a');
+	                	var span = document.createElement('span');
+	                	newHobbie.href = '/home?hobbie='+hobbie;
+	                	span.className = 'tags';
+	                	span.textContent = '#'+hobbie;
+	                	newHobbie.append(span);
+	                	hobbieList.append(newHobbie);
+                	}
+				});
+
+				$('#goback').on('click', function(e) {
+					e.preventDefault();
+					history.back();
+				});
+
+				<% if (user) { %>
+				    var socket = io.connect('http://localhost:8080');
+				    socket.on('connect', function() {
+				    	socket.emit('newUser', {login: '<%=user%>', id: socket.id});
+
+						
+				    	function hideChat() {
+							<% if (user != login) { %>
+								var emit = 'yes';
+								<%  for (var j = 0; j < blockedUsers.length; j++) {
+		                            if ((user == blockedUsers[j].blocked) & ((blockedUsers[j].blocker == "all") | (blockedUsers[j].blocker == login))) { %>
+		                            	emit = 'no';
+		                                $('#like').hide();
+		                                if ($('#chat')) {
+		                                	$('#chat').hide();
+		                                }
+		                            <%}%>
+		                       <% }%>
+		                       return (emit);
+							<% } %>
+				    	}
+                        if (hideChat() == "yes") {
+							socket.emit('newVisit', {visitor: '<%=user%>', visited: '<%=login%>', id: socket.id});
+							socket.emit('sendNotif', {type: 'visit', user: '<%=user%>', dest: '<%=login%>'});
+                        }
+
+
+						function ilike() {
+							var request = new XMLHttpRequest();
+							request.open('POST', '/like', true);
+							request.setRequestHeader('Content-Type', 'application/x-www-form-urlencoded; charset=UTF-8');
+							if (document.getElementById('like').style.backgroundColor !== 'rgb(182, 59, 77)') {
+								request.send("likeduser=<%= login %>");
+								document.getElementById('like').style.backgroundColor = 'rgb(182, 59, 77)';
+								var tab = document.getElementById('matchaz').innerHTML;
+								tab.split(' ');
+								var i = 0;
+								for (var i = 0; i < tab.length; i++) {
+									if (isNaN(parseInt(tab[i])) === false) {
+										var num = parseInt(tab[i]);
+									}
+								}
+								num = num + 1;
+								document.getElementById('matchaz').innerHTML = "<i class='fa fa-heart'></i> Popularité:  "+num+" Matchaz ";
+								document.getElementById('like').innerHTML = "<i class='fa fa-fire'></i> Je l'ai matché(e)! ";
+								<% if (imliked == 'yes') { %>
+									document.getElementById('chat').style.display = "inline-block";
+									socket.emit('sendNotif', {type: 'likeboth', user: '<%=user%>', dest: '<%=login%>'});
+								<% }
+								else {%>
+									socket.emit('sendNotif', {type: 'like', user: '<%=user%>', dest: '<%=login%>'});
+								<% } %>
+
+								socket.emit('checkMatcha', {user1: '<%=user%>', user2: '<%=login%>'});
+							}
+							else {
+								request.send("unlikeduser=<%= login %>");
+								document.getElementById('like').style.backgroundColor = '#444359';
+								var tab = document.getElementById('matchaz').innerHTML;
+								tab.split(' ');
+								var i = 0;
+								for (var i = 0; i < tab.length; i++) {
+									if (isNaN(parseInt(tab[i])) === false) {
+										var num = parseInt(tab[i]);
+									}
+								}
+								if (num >= 1) {
+									num = num - 1;
+								}
+								document.getElementById('matchaz').innerHTML = "<i class='fa fa-heart'></i> Popularité:  "+num+" Matchaz ";
+								document.getElementById('like').innerHTML = "<i class='fa fa-fire'></i> Je matcha! ";
+								document.getElementById('chat').style.display = "none";
+
+
+
+
+								socket.emit('sendNotif', {type: 'unlike', user: '<%=user%>', dest: '<%=login%>'});		
+							}
+
+						}
+
+						if (document.getElementById('like')) {
+							document.getElementById('like').addEventListener('click', ilike, false);	
+						}
+
+						setInterval(function() { socket.emit('checkMatcha', {user1: '<%=user%>', user2: '<%=login%>'}); }, 1000);
+
+						
+						<% if (matcha == 'yes') { %>
+							document.getElementById('chat').style.display = "inline-block";
+						<% } %>
+
+						<% if (imliked == 'yes'){ %>
+							document.getElementById('chatbis').style.display = "inline-block";
+						<% } %>
+						hideChat();
+
+					    
+						socket.on('newNotif', function(data) {
+							if ('<%=user%>' != data.author) {
+							    var counter = parseInt($('.badge').html());
+							    if (isNaN(counter)) {
+							        counter = 0;
+							    }
+							    var li = $(document.createElement('a'));
+							    var divider = $(document.createElement('li'));
+							    divider.addClass('divider');
+							    li.html(data.newNotif);
+							    li.attr('href', data.href);
+							    $('#notifsList').prepend(divider);
+							    $('#notifsList').prepend(li);
+							    counter = counter + 1;
+							    $('.badge').html(counter);
+							    if ((data.type == "unlike") && (data.author == '<%=login%>')) {
+							    	window.location.reload();
+							    	document.getElementById('chat').style.display = "none";
+							    	document.getElementById('chatbis').style.display = "none";
+						    	}
+						    	else if ((data.type == "likeboth") && (data.author == '<%=login%>')) {
+							    	document.getElementById('chat').style.display = "inline-block";
+							    	document.getElementById('chatbis').style.display = "inline-block";
+						    	}
+							    else if ((data.type == "like") && (data.author == '<%=login%>')) {
+							    	document.getElementById('chatbis').style.display = "inline-block";
+							    }
+							}
+						});
+
+						socket.on('checkedMatcha', function(data){
+							if (data.matcha == 'yes') {
+								document.getElementById('chat').style.display = "inline-block";
+								document.getElementById('chatbis').style.display = "inline-block";
+							}
+							else {
+								document.getElementById('chat').style.display = "none";
+							}
+							hideChat();
+						});
+
+						$('#report').on('click', function() {
+							$('#report').text('Vous avez signalé cet utilisateur!')
+							socket.emit('newReport', {reporter: '<%=user%>', reported: '<%=login%>'});
+						});
+
+						$('#block').on('click', function() {
+							$('#block').text('Vous avez bloqué cet utilisateur!')
+							socket.emit('newBlock', {blocker: '<%=user%>', blocked: '<%=login%>'});
+						});
+
+						$('#notifs').on('click', function(e) {
+			                socket.emit('readNotifs', {read: '<%=user%>', id: socket.id});
+			                $('.badge').html('');
+			            });
+
+					});
+				<% } %>
+			</script>
+
+		</main>
+
+		<%	include footer %>
+
+	</body>
+
+</html>

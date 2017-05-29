@@ -1,0 +1,53 @@
+<div class="navbar navbar-inverse navbar-fixed-top">
+  <script src="dynamic_navbar.js"></script>
+
+	<div class="container">
+  	<div class="navbar-header">
+    		<button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target="#navbar" aria-expanded="false" aria-controls="navbar">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+    		</button>
+      <a id="logo" class="navbar-brand" href="/">Matcha<p id="slogan">Match the One!</p></a>
+    </div>
+    <div id="navbar" class="collapse navbar-collapse">
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/home"><i class="fa fa-home fa-2x"></i></a></li>
+            <% if (user) { %>
+            <li><a href="/profile?login=<%= user %>"><i class="fa fa-user fa-2x"></i></a></li>
+            <li><a href="/search"><i class="fa fa-search fa-2x"></i></a></li>
+
+            <li id="notifs" class="dropdown">
+              <a class="dropdown-toggle" data-toggle="dropdown" href="#"><i class="fa fa-globe fa-2x"></i><span class="badge"><%if (count != 0) {%><%=count%><%}%></span></a>
+              <ul id="notifsList" class="dropdown-menu">
+
+              </ul>
+            </li>
+
+            <li><a href="/logout"><i class="fa fa-power-off fa-2x"></i></a></li>
+          <%}%>
+        </ul>
+    </div>
+  </div>
+</div>
+
+<script type="text/javascript">
+
+  <%if (notifs != undefined) {
+      if (notifs != '') {
+      for (var i = 0; i < notifs.length; i++) { %>
+        var li = $(document.createElement('a'));
+        var divider = $(document.createElement('li'));
+        divider.addClass('divider');
+        li.html('<%=notifs[i].content%>');
+        var str = '<%=notifs[i].content%>';
+        var content = str.split(' ');
+        li.attr('href', '/profile?login='+content[0]);
+        $('#notifsList').append(li);
+        $('#notifsList').append(divider);
+        
+  <% } } }%>
+</script>
+
+<script src="/socket.io/socket.io.js"></script>

@@ -1,0 +1,139 @@
+<!DOCTYPE html>
+<html>
+
+	<% include header %>
+	<link href="../../style/profile.css" rel="stylesheet">
+	<link rel="stylesheet" type="text/css" href="../../style/chat.css">
+
+
+	
+	<body>
+	
+		<main class="wrapper">
+
+			<% include nav %>
+
+			<div class="chat_window">
+				<div class="top_menu">
+					<div class="title">Chat avec <%=dest%> </div>
+				</div>
+				<ul class="messages"></ul>
+				<div class="bottom_wrapper clearfix">
+					<div class="message_input_wrapper">
+						<input class="message_input" placeholder="Type your message here..." />
+					</div>
+					<div class="send_message" id="send">
+						<div class="icon"></div>
+						<div class="text">Send</div>
+					</div>
+				</div>
+			</div>
+
+			<div class="message_template">
+				<li class="message">
+					<div class="text_wrapper">
+						<p class="author"></p>
+						<div class="text"></div>
+					</div>
+				</li>
+			</div>
+
+			<input class="dest" type="hidden" id="<%=dest%>">
+			<input class="user" type="hidden" id="<%=user%>">
+			<input class="room" type="hidden" value="<%=room%>">
+
+		</main>
+
+
+		<script src="profile_full.js" ></script>
+		<script src="chat.js" ></script>
+		<script src="/socket.io/socket.io.js"></script>
+        <script>
+            var socket = io.connect('http://localhost:8080');
+            socket.on('connect', function() {
+
+				<%if (user) {%>
+		    		socket.emit('newUser', {login: '<%=user%>', id: socket.id});
+		    	<%}%>
+            	
+            	var Message;
+			    Message = function (arg) {
+			        this.text = arg.text, this.message_side = arg.message_side, this.author = arg.author;
+			        this.draw = function (_this) {
+			            return function () {
+			                var $message;
+			                $message = $($('.message_template').clone().html());
+			                $message.addClass(_this.message_side).find('.text').html(_this.text);
+			                $message.find('.author').html(_this.author);
+			                $('.messages').append($message);
+			                return setTimeout(function () {
+			                    return $message.addClass('appeared');
+			                }, 0);
+			            };
+			        }(this);
+			        return this;
+			    };
+
+    			var $messages, message, text, author;
+				<%for (var i = 0; i < chatDatas.length; i++) {%>
+	                text = '<%=chatDatas[i].text%>';
+	                $('.message_input').val('');
+	                author = '<%=chatDatas[i].author%>';
+	                $messages = $('.messages');
+					if (<%=chatDatas[i].author%> == <%=user%>) {
+						message_side = 'left';
+					}
+					else {
+						message_side = 'right';
+					}
+	                message = new Message({
+	                    text: text,
+	                    message_side: message_side,
+	                    author: author
+	                });
+	                message.draw();
+				<%}%>
+                if ($messages) {
+                	$messages.animate({ scrollTop: $messages.prop('scrollHeight') }, 300);
+                }
+
+
+                $('#notifs').on('click', function(e) {
+	                socket.emit('readNotifs', {read: '<%=user%>', id: socket.id});
+	                $('.badge').html('');
+	            });
+
+		        socket.on('noChat', () => {
+		        	$('#logo')[0].click();
+		        })
+
+	            socket.on('newNotif', function(data) {
+		            if ('<%=user%>' != data.author) {
+		                var counter = parseInt($('.badge').html());
+		                if (isNaN(counter)) {
+		                    counter = 0;
+		                }
+		                var li = $(document.createElement('a'));
+		                var divider = $(document.createElement('li'));
+		                divider.addClass('divider');
+		                li.textContent = data.newNotif;
+		                li.html(data.newNotif);
+		                li.attr('href', data.href);
+		                $('#notifsList').prepend(divider);
+		                $('#notifsList').prepend(li);
+		                if (counter !== 0) {
+		                	$('.badge').html(counter);
+		                }
+		            }
+		        });
+
+
+            });
+        </script>
+
+
+		<%	include footer %>
+
+	</body>
+
+</html>
